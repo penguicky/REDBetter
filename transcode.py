@@ -9,8 +9,6 @@ import shutil
 import signal
 import subprocess
 import sys
-from HTMLParser import HTMLParser
-import unidecode
 
 import mutagen.flac
 
@@ -247,8 +245,7 @@ def path_length_exceeds_limit(flac_dir, basename):
 
 
 def get_suitable_basename(basename):
-    h = HTMLParser()
-    return unidecode.unidecode(h.unescape(basename).replace('\\', ',').replace('/', ',').replace(':', ',').replace('*', '').replace('?', '').replace('"', '').replace('<', '').replace('>', '').replace('|', ''))
+    return basename.replace('\0', '').replace('\\', ',').replace('/', '').replace(':', ',').replace('*', '').replace('?', '').replace('"', '').replace('<', '').replace('>', '').replace('|', '')
 
 
 def get_suffix(output_format):
