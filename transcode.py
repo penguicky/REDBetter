@@ -245,7 +245,7 @@ def path_length_exceeds_limit(flac_dir, basename):
 
 
 def get_suitable_basename(basename):
-    return basename.replace('\0', '').replace('\\', ',').replace('/', '').replace(':', ',').replace('*', '').replace('?', '').replace('"', '').replace('<', '').replace('>', '').replace('|', '')
+    return basename.replace('\0', '').replace('\\', ',').replace('/', '').replace(':', ',').replace('*', '').replace('?', '').replace('"', '').replace('<', '').replace('>', '').replace('|', '').encode("utf-8")
 
 
 def get_suffix(output_format):
