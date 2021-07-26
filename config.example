@@ -1,6 +1,7 @@
 [redacted]
 username =
 password =
+session_cookie =
 data_dir = /data
 output_dir = /output
 torrent_dir = /torrents
