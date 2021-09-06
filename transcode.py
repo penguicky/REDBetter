@@ -156,11 +156,12 @@ def transcode_commands(output_format, resample, needed_sample_rate, flac_file, t
     if output_format == 'FLAC' and resample:
         commands = ['sox %(FLAC)s -G -b 16 %(FILE)s rate -v -L %(SAMPLERATE)s dither' % transcode_args]
     else:
-        commands = map(lambda cmd: cmd % transcode_args, transcoding_steps)
+        commands = [cmd % transcode_args for cmd in transcoding_steps]
     return commands
 
 # Pool.map() can't pickle lambdas, so we need a helper function.
-def pool_transcode((flac_file, output_dir, output_format)):
+def pool_transcode(xxx_todo_changeme):
+    (flac_file, output_dir, output_format) = xxx_todo_changeme
     return transcode(flac_file, output_dir, output_format)
 
 def transcode(flac_file, output_dir, output_format):
@@ -286,8 +287,8 @@ def get_transcode_dir(flac_dir, output_dir, basename, output_format, no_prompt, 
 
     if no_prompt:
         if path_length_exceeds_limit(flac_dir, newbasename):
-            print "The file paths in this torrent exceed the 180 character limit. \n\
-                The current directory name is: " + get_suitable_basename(newbasename.decode('utf-8'))
+            print(("The file paths in this torrent exceed the 180 character limit. \n\
+                The current directory name is: " + get_suitable_basename(newbasename.decode('utf-8'))))
 
             # try smart shortening
             if base_attrs is not None:
@@ -296,25 +297,25 @@ def get_transcode_dir(flac_dir, output_dir, basename, output_format, no_prompt, 
                     del base_attrs['remaster']
                     newbasename = get_suitable_basename(get_basename(base_attrs) + get_suffix(output_format))
                     if not path_length_exceeds_limit(flac_dir, newbasename):
-                        print "Auto-shortened directory name: " + newbasename
+                        print(("Auto-shortened directory name: " + newbasename))
                         return os.path.join(output_dir, newbasename)
                 # drop media
                 del base_attrs['media']
                 newbasename = get_suitable_basename(get_basename(base_attrs) + get_suffix(output_format))
                 if not path_length_exceeds_limit(flac_dir, newbasename):
-                    print "Auto-shortened directory name: " + newbasename
+                    print(("Auto-shortened directory name: " + newbasename))
                     return os.path.join(output_dir, newbasename)
                 # drop year
                 del base_attrs['year']
                 newbasename = get_suitable_basename(get_basename(base_attrs) + get_suffix(output_format))
                 if not path_length_exceeds_limit(flac_dir, newbasename):
-                    print "Auto-shortened directory name: " + newbasename
+                    print(("Auto-shortened directory name: " + newbasename))
                     return os.path.join(output_dir, newbasename)
                 # drop artist
                 del base_attrs['artist']
                 newbasename = get_suitable_basename(get_basename(base_attrs) + get_suffix(output_format))
                 if not path_length_exceeds_limit(flac_dir, newbasename):
-                    print "Auto-shortened directory name: " + newbasename
+                    print(("Auto-shortened directory name: " + newbasename))
                     return os.path.join(output_dir, newbasename)
                 # we dropped pretty much everything we could, fall back to dummy shortening
 
@@ -323,10 +324,10 @@ def get_transcode_dir(flac_dir, output_dir, basename, output_format, no_prompt, 
             while path_length_exceeds_limit(flac_dir, newbasename):
                 shortened_basename = shortened_basename[:-1]
                 newbasename = get_suitable_basename(shortened_basename + get_suffix(output_format))
-            print "Auto-shortened directory name: " + newbasename
+            print(("Auto-shortened directory name: " + newbasename))
     else:
         while path_length_exceeds_limit(flac_dir, newbasename):
-            newbasename = get_suitable_basename(raw_input("The file paths in this torrent exceed the 180 character limit. \n\
+            newbasename = get_suitable_basename(input("The file paths in this torrent exceed the 180 character limit. \n\
                 The current directory name is: " + get_suitable_basename(newbasename.decode('utf-8')) + " \n\
                 Please enter a shorter directory name: ").decode('utf-8'))
 
@@ -434,7 +435,7 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('input_dir')
     parser.add_argument('output_dir')
-    parser.add_argument('output_format', choices=encoders.keys())
+    parser.add_argument('output_format', choices=list(encoders.keys()))
     parser.add_argument('-j', '--threads', default=multiprocessing.cpu_count(), type=int)
     args = parser.parse_args()
 
