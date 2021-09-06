@@ -5,8 +5,8 @@ import json
 import time
 import requests
 import mechanize
-import HTMLParser
-from cStringIO import StringIO
+import html.parser
+from io import StringIO
 
 headers = {
     'Connection': 'keep-alive',
@@ -27,7 +27,7 @@ media_search_map = {
     'dat': 'DAT',
     'web': 'WEB',
     'blu-ray': 'Blu-ray'
-    }
+}
 
 lossless_media = set(media_search_map.keys())
 
@@ -37,18 +37,19 @@ formats = {
         'encoding': 'Lossless'
     },
     'V0': {
-        'format' : 'MP3',
-        'encoding' : 'V0 (VBR)'
+        'format': 'MP3',
+        'encoding': 'V0 (VBR)'
     },
     '320': {
-        'format' : 'MP3',
-        'encoding' : '320'
+        'format': 'MP3',
+        'encoding': '320'
     },
     'V2': {
-        'format' : 'MP3',
-        'encoding' : 'V2 (VBR)'
+        'format': 'MP3',
+        'encoding': 'V2 (VBR)'
     },
 }
+
 
 def allowed_transcodes(torrent):
     """Some torrent types have transcoding restrictions."""
@@ -56,13 +57,16 @@ def allowed_transcodes(torrent):
     if preemphasis:
         return []
     else:
-        return formats.keys()
+        return list(formats.keys())
+
 
 class LoginException(Exception):
     pass
 
+
 class RequestException(Exception):
     pass
+
 
 class RedactedAPI:
     def __init__(self, username=None, password=None, session_cookie=None):
@@ -76,7 +80,7 @@ class RedactedAPI:
         self.userid = None
         self.tracker = "https://flacsfor.me/"
         self.last_request = time.time()
-        self.rate_limit = 2.0 # seconds between requests
+        self.rate_limit = 2.0  # seconds between requests
         self._login()
 
     def _login(self):
@@ -84,13 +88,13 @@ class RedactedAPI:
             try:
                 self._login_cookie()
             except:
-                print "WARNING: session cookie attempted and failed"
+                print("WARNING: session cookie attempted and failed")
                 self._login_username_password()
         else:
             self._login_username_password()
 
     def _login_cookie(self):
-        mainpage = 'https://redacted.ch/';
+        mainpage = 'https://redacted.ch/'
         cookiedict = {"session": self.session_cookie}
         cookies = requests.utils.cookiejar_from_dict(cookiedict)
 
@@ -108,7 +112,7 @@ class RedactedAPI:
         '''Logs in user and gets authkey from server'''
 
         if not self.username or self.username == "":
-            print "WARNING: username authentication attempted, but username not set, skipping."
+            print("WARNING: username authentication attempted, but username not set, skipping.")
             raise LoginException
         loginpage = 'https://redacted.ch/login.php'
         data = {'username': self.username,
@@ -146,7 +150,7 @@ class RedactedAPI:
         try:
             parsed = json.loads(r.content)
             if parsed['status'] != 'success':
-                #raise RequestException
+                # raise RequestException
                 return None
             return parsed['response']
         except ValueError:
@@ -217,8 +221,9 @@ class RedactedAPI:
         response = self.session.get(url)
         forms = mechanize.ParseFile(StringIO(response.text.encode('utf-8')), url)
         form = forms[-1]
-        form.find_control('file_input').add_file(open(new_torrent), 'application/x-bittorrent', os.path.basename(new_torrent))
-        #if torrent['remastered']:
+        form.find_control('file_input').add_file(open(new_torrent), 'application/x-bittorrent',
+                                                 os.path.basename(new_torrent))
+        # if torrent['remastered']:
         #    form.find_control('remaster').set_single('1')
         if torrent['remasterYear'] != 0:
             form['remaster_year'] = str(torrent['remasterYear'])
@@ -248,7 +253,8 @@ class RedactedAPI:
         return self.session.post(url, data=data, headers=dict(headers))
 
     def release_url(self, group, torrent):
-        return "https://redacted.ch/torrents.php?id=%s&torrentid=%s#torrent%s" % (group['group']['id'], torrent['id'], torrent['id'])
+        return "https://redacted.ch/torrents.php?id=%s&torrentid=%s#torrent%s" % (
+            group['group']['id'], torrent['id'], torrent['id'])
 
     def permalink(self, torrent):
         return "https://redacted.ch/torrents.php?torrentid=%s" % torrent['id']
@@ -286,5 +292,6 @@ class RedactedAPI:
     def get_torrent_info(self, id):
         return self.request('torrent', id=id)['torrent']
 
+
 def unescape(text):
-    return HTMLParser.HTMLParser().unescape(text)
+    return html.parser.HTMLParser().unescape(text)
