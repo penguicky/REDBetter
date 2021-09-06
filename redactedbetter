@@ -24,6 +24,10 @@ def create_description(torrent, flac_dir, format, permalink):
 
     description = [
         'Transcode of [url=%s]%s[/url]' % (permalink, permalink),
+        '',
+        'Transcode process:',
+        '',
+        '[code]%s[/code]' % ' | '.join(cmds),
         ]
     return description
 
