@@ -5,7 +5,7 @@ import json
 import time
 import requests
 import mechanize
-import html.parser
+import html
 from io import StringIO
 
 headers = {
@@ -294,4 +294,4 @@ class RedactedAPI:
 
 
 def unescape(text):
-    return html.parser.HTMLParser().unescape(text)
+    return html.unescape(text)
