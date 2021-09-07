@@ -98,9 +98,9 @@ class TestGetSuitableBasename(unittest.TestCase):
         self.assertEqual(expected, actual)
 
     def test_japanese(self):
-        name = 'Nihon Kogakuin College (日本工学院専門学校) - (1985) Pink Papaia {NKS MD8503A 24-96 Vinyl} [FLAC]'
+        name = u'Nihon Kogakuin College (日本工学院専門学校) - (1985) Pink Papaia {NKS MD8503A 24-96 Vinyl} [FLAC]'
         expected = name
-        actual = str(transcode.get_suitable_basename(name),"utf-8")
+        actual = unicode(transcode.get_suitable_basename(name),"utf-8")
         self.assertEqual(expected, actual)
 
     def test_illegal_characters(self):
