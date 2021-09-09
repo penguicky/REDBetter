@@ -249,7 +249,7 @@ def get_suitable_basename(basename):
 
 
 def get_suffix(output_format):
-    suffix = "["
+    suffix = " "
     if output_format == "FLAC":
         suffix += "FLAC"
     elif output_format == "V0":
@@ -270,9 +270,9 @@ def get_basename(base_attrs):
     if "remaster" in base_attrs and len(base_attrs['remaster']) >= 1:
         basename += " (" + base_attrs['remaster'] + ")"
     if 'year' in base_attrs:
-        basename += "[" + base_attrs['year'] + "]"
+        basename += " (" + base_attrs['year'] + ")"
     if 'media' in base_attrs:
-        basename += "[" + base_attrs['media'] + "]"
+        basename += " [" + base_attrs['media']
     return basename
 
 
